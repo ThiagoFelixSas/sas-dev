@@ -1,0 +1,28 @@
+import saspy  # Interface oficial para integração Python e SAS
+import time   # Gerenciamento de intervalos e temporização
+
+def conectar_com_seguranca():
+    """
+    Estabelece conexão com o SAS Viya utilizando política de retentativas (Retries).
+    """
+    max_tentativas = 3  # Limite de tentativas para evitar loops infinitos
+    
+    for i in range(max_tentativas):
+        try:
+            print(f"Iniciando tentativa {i+1} de conexão ao SAS Viya...")
+            
+            # Inicializa a sessão utilizando as configurações do sascfg_personal.py
+            sas = saspy.SASsession() 
+            
+            print("Conexão estabelecida com sucesso.")
+            return sas
+            
+        except Exception as e:
+            # Captura a exceção para logar o erro sem interromper a execução
+            print(f"Falha na conexão. Aguardando 5 segundos para nova tentativa... [Erro: {e}]")
+            time.sleep(5) # Intervalo de segurança (Backoff)
+            
+    print("Erro Crítico: Limite de tentativas excedido. Verifique o status do servidor.")
+
+# Execução do módulo de conexão
+sessao_sas = conectar_com_seguranca()
